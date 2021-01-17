@@ -1,6 +1,5 @@
 import configparser
-import threading
-import evdev
+
 
 from time import sleep
 
@@ -9,14 +8,14 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from phue import Bridge
 
-
 config = configparser.ConfigParser()
 config.read('config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
 buttonPin = int(config['DEFAULT']['buttonPin'])
 ledPin = int(config['DEFAULT']['ledPin'])
-discoTime = int(int(config['DEFAULT']['discoTime'])/1.5)
+discoTime = int(int(config['DEFAULT']['discoTime']) / 1.5)
+useThreading = config['DEFAULT'].getboolean('useThreading')
 
 spotifyClientId = config['spotify']['clientId']
 spotifyClientSecret = config['spotify']['clientSecret']
@@ -26,13 +25,13 @@ spotifyUsername = config['spotify']['username']
 spotifyPlaylist = config['spotify']['playlist']
 spotifyDevice = config['spotify']['device']
 
-spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=spotifyClientId, client_secret=spotifyClientSecret, redirect_uri=spotifyRedirectUri, scope=spotifyScope, open_browser=False, username=spotifyUsername))
-
+spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=spotifyClientId, client_secret=spotifyClientSecret,
+                                                    redirect_uri=spotifyRedirectUri, scope=spotifyScope,
+                                                    open_browser=False, username=spotifyUsername))
 
 hueBridgeIp = config['hue']['bridgeIp']
 groupName = config['hue']['groupName']
 sceneName = config['hue']['sceneName']
-
 
 hueBridge = Bridge(hueBridgeIp)
 hueBridge.connect()
@@ -75,7 +74,6 @@ def discoLights():
             stopDisco()
             break
 
-
     stopDisco()
 
 
@@ -93,21 +91,28 @@ def stopDisco():
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     spotify.pause_playback(device_id=spotifyDevice)
 
-def lookForFastForward():
-    speakerButtons = evdev.InputDevice('/dev/input/event0')
-    for event in speakerButtons.read_loop():
-        if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
+if useThreading:
+    import threading
+    import evdev
+
+    def lookForFastForward():
+        speakerButtons = evdev.InputDevice('/dev/input/event0')
+        for event in speakerButtons.read_loop():
             if evdev.events.KeyEvent(event).key_up == 0:
-                spotify.next_track()
+                if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
+                    spotify.next_track()
+
 
 if __name__ == "__main__":
 
-    ffThread = threading.Thread(target=lookForFastForward)
-    ffThread.start()
+    if useThreading:
+        ffThread = threading.Thread(target=lookForFastForward)
+        ffThread.start()
 
     if useGpio:
         from gpiozero import Button, LED
         from signal import pause
+
         button = Button(buttonPin)
         led = LED(ledPin)
         led.on()
