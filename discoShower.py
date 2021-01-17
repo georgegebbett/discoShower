@@ -68,7 +68,7 @@ def discoLights():
             discoLight.hue = 25500
         sleep(0.5)
         flashPass = flashPass + 1
-        if not allLights[int(discoLightList[1])].on:
+        if not allLights[int(discoLightList[0])].on:
             stopDisco()
             break
 
