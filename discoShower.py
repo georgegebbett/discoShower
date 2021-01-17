@@ -13,6 +13,7 @@ config.read('config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
 buttonPin = int(config['DEFAULT']['buttonPin'])
+ledPin = int(config['DEFAULT']['ledPin'])
 discoTime = int(int(config['DEFAULT']['discoTime'])/1.5)
 
 spotifyClientId = config['spotify']['clientId']
@@ -67,23 +68,37 @@ def discoLights():
             discoLight.hue = 25500
         sleep(0.5)
         flashPass = flashPass + 1
+        if not allLights[1].on:
+            stopDisco()
+            break
+
+
     stopDisco()
 
 
 def startDisco():
+    if useGpio:
+        led = LED(ledPin)
+        led.blink()
+
     discoMusic()
     discoLights()
 
 
 def stopDisco():
+    if useGpio:
+        led = LED(ledPin)
+        led.on()
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     spotify.pause_playback(device_id=spotifyDevice)
 
 
 if useGpio:
-    from gpiozero import Button
+    from gpiozero import Button, LED
     from signal import pause
     button = Button(buttonPin)
+    led = LED(ledPin)
+    led.on()
     button.when_pressed = startDisco
     pause()
 else:
