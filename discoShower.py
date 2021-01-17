@@ -8,7 +8,6 @@ from spotipy.oauth2 import SpotifyOAuth
 from phue import Bridge
 
 
-
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -28,7 +27,6 @@ spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=spotifyClientId, c
 
 
 hueBridgeIp = config['hue']['bridgeIp']
-lightName = config['hue']['lightName']
 groupName = config['hue']['groupName']
 sceneName = config['hue']['sceneName']
 
@@ -36,34 +34,51 @@ sceneName = config['hue']['sceneName']
 hueBridge = Bridge(hueBridgeIp)
 hueBridge.connect()
 
+
 def discoMusic():
     spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
     spotify.shuffle(device_id=spotifyDevice, state=True)
     spotify.next_track(spotifyDevice)
 
+
 def discoLights():
-    discoLight = hueBridge.get_light_objects('name')[lightName]
-    discoLight.transitiontime = 0
-    flashPass = 0
-    discoLight.on = True
-    while flashPass < discoTime:
-        discoLight.hue = 65535
+    discoLightGroupId = hueBridge.get_group_id_by_name(groupName)
+    allLights = hueBridge.get_light_objects('id')
+    discoLightList = hueBridge.get_group(discoLightGroupId)['lights']
+
+    for light in discoLightList:
+        discoLight = allLights[int(light)]
+        discoLight.transitiontime = 0
+        discoLight.on = True
         discoLight.saturation = 254
+
+    flashPass = 0
+    while flashPass < discoTime:
+        for light in discoLightList:
+            discoLight = allLights[int(light)]
+            discoLight.hue = 65535
         sleep(0.5)
-        discoLight.hue = 46920
+        for light in discoLightList:
+            discoLight = allLights[int(light)]
+            discoLight.hue = 46920
         sleep(0.5)
-        discoLight.hue = 25500
+        for light in discoLightList:
+            discoLight = allLights[int(light)]
+            discoLight.hue = 25500
         sleep(0.5)
         flashPass = flashPass + 1
     stopDisco()
+
 
 def startDisco():
     discoMusic()
     discoLights()
 
+
 def stopDisco():
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     spotify.pause_playback(device_id=spotifyDevice)
+
 
 if useGpio:
     from gpiozero import Button
@@ -73,5 +88,3 @@ if useGpio:
     pause()
 else:
     startDisco()
-
-
