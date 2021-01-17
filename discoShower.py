@@ -78,7 +78,6 @@ def discoLights():
 
 def startDisco():
     if useGpio:
-        led = LED(ledPin)
         led.blink()
 
     discoMusic()
@@ -87,7 +86,6 @@ def startDisco():
 
 def stopDisco():
     if useGpio:
-        led = LED(ledPin)
         led.on()
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     spotify.pause_playback(device_id=spotifyDevice)
