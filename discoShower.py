@@ -46,9 +46,6 @@ def discoLights():
     allLights = hueBridge.get_light_objects('id')
     discoLightList = hueBridge.get_group(discoLightGroupId)['lights']
 
-    print(allLights)
-    print(discoLightList)
-
     for light in discoLightList:
         discoLight = allLights[int(light)]
         discoLight.transitiontime = 0
