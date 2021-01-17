@@ -94,7 +94,7 @@ def stopDisco():
     spotify.pause_playback(device_id=spotifyDevice)
 
 def lookForFastForward():
-    speakerButtons = evdev.inputDevice('/dev/input/event0')
+    speakerButtons = evdev.InputDevice('/dev/input/event0')
     for event in speakerButtons.read_loop():
         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
             if evdev.events.KeyEvent(event).key_up == 0:
