@@ -15,6 +15,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
+gpioPin = int(config['DEFAULT']['gpioPin'])
 
 spotifyClientId = config['spotify']['clientId']
 spotifyClientSecret = config['spotify']['clientSecret']
@@ -66,7 +67,7 @@ def stopDisco():
     spotify.pause_playback(device_id=spotifyDevice)
 
 if useGpio:
-    button = Button(3)
+    button = Button(gpioPin)
     button.when_pressed = startDisco
     pause()
 else:
