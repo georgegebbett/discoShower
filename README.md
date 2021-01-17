@@ -11,6 +11,7 @@ You will need a `config.ini` file in the same directory as `discoShower.py`. the
 [DEFAULT]
 useGpio = False
 buttonPin = gpioPinOfYourButton
+ledPin = gpioPinOfYourLed
 discoTime = defaultDiscoLengthInSeconds
 
 [spotify]
@@ -35,4 +36,4 @@ Non-standard dependencies (on Raspbian) are [spotipy](https://github.com/plamere
 
 If you are not using a desktop version of Raspbian, you will need to install [gpiozero](https://github.com/gpiozero/gpiozero), again available on pip.
 
-You can run `spotifyUtils.py` to get a list of your Spotify devices and their IDs. This too requires a config file in the same directory.
+You can run `spotifyUtils.py` to get a list of your Spotify devices and their IDs, as well as the names of your Hue groups. This too requires a config file in the same directory.
