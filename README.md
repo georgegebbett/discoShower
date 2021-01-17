@@ -31,4 +31,4 @@ sceneName = yourSceneName
 
 You will have to create a Spotify application in their developer portal to get a client ID and secret. Your redirect URI does not necessarily need to be accessible.
 
-Non standard dependencies are [spotipy](https://github.com/plamere/spotipy) and [phue](https://github.com/studioimaginaire/phue) - big love to their creators ♥️
+Non-standard dependencies are [spotipy](https://github.com/plamere/spotipy) and [phue](https://github.com/studioimaginaire/phue) - big love to their creators ♥️
