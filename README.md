@@ -10,7 +10,8 @@ You will need a `config.ini` file in the same directory as `discoShower.py`. the
 ```
 [DEFAULT]
 useGpio = False
-gpioPin = gpioPinOfYourButton
+buttonPin = gpioPinOfYourButton
+discoTime = defaultDiscoLengthInSeconds
 
 [spotify]
 clientId = yourClientId
@@ -31,4 +32,6 @@ sceneName = yourSceneName
 
 You will have to create a Spotify application in their developer portal to get a client ID and secret. Your redirect URI does not necessarily need to be accessible.
 
-Non-standard dependencies are [spotipy](https://github.com/plamere/spotipy) and [phue](https://github.com/studioimaginaire/phue), both available on pip - big love to their creators ♥️
+Non-standard dependencies (on Raspbian) are [spotipy](https://github.com/plamere/spotipy) and [phue](https://github.com/studioimaginaire/phue), both available on pip - big love to their creators ♥️
+
+If you are not using a desktop version of Raspbian, you will need to install [gpiozero](https://github.com/gpiozero/gpiozero), again available on pip.

@@ -7,15 +7,14 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from phue import Bridge
 
-from gpiozero import Button
-from signal import pause
 
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
-gpioPin = int(config['DEFAULT']['gpioPin'])
+buttonPin = int(config['DEFAULT']['buttonPin'])
+discoTime = int(int(config['DEFAULT']['discoTime'])/1.5)
 
 spotifyClientId = config['spotify']['clientId']
 spotifyClientSecret = config['spotify']['clientSecret']
@@ -45,9 +44,9 @@ def discoMusic():
 def discoLights():
     discoLight = hueBridge.get_light_objects('name')[lightName]
     discoLight.transitiontime = 0
-    itr = 0
+    flashPass = 0
     discoLight.on = True
-    while itr < 201000:
+    while flashPass < discoTime:
         discoLight.hue = 65535
         discoLight.saturation = 254
         sleep(0.5)
@@ -55,7 +54,7 @@ def discoLights():
         sleep(0.5)
         discoLight.hue = 25500
         sleep(0.5)
-        itr = itr + 1
+        flashPass = flashPass + 1
     stopDisco()
 
 def startDisco():
@@ -67,7 +66,9 @@ def stopDisco():
     spotify.pause_playback(device_id=spotifyDevice)
 
 if useGpio:
-    button = Button(gpioPin)
+    from gpiozero import Button
+    from signal import pause
+    button = Button(buttonPin)
     button.when_pressed = startDisco
     pause()
 else:
