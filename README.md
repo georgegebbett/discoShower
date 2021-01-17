@@ -24,7 +24,6 @@ device = yourDeviceId
 
 [hue]
 bridgeIp = yourHueBridgeIp
-lightName = yourLightName
 groupName = yourGroupName
 sceneName = yourSceneName
 ```
