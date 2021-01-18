@@ -8,6 +8,7 @@ def lookForFastForward():
             break
         else:
             speakerButtons = evdev.InputDevice('/dev/input/event0')
+            print(speakerButtons)
             event = speakerButtons.read_one()
             speakerButtons.close()
             print(type(event))
