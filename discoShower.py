@@ -1,5 +1,6 @@
 import configparser
 import sys
+import subprocess
 
 from time import sleep
 
@@ -113,7 +114,7 @@ def stopDisco():
     spotify.pause_playback(device_id=spotifyDevice)
     print("Music stopped")
     print("Attempting speaker disconnect")
-    system("sudo hcitool dc FC:58:FA:7A:FE:79")
+    subprocess.run(["sudo", "hcitool", "dc", "FC:58:FA:7A:FE:79"])
     print("Waiting for bluetooth thread to join")
     if useThreading:
         ffThread.join()
@@ -131,7 +132,7 @@ def checkForSpeaker():
         else:
             if not errorPrinted:
                 print("Speaker not connected, attempting connection, turn speaker on to continue")
-                system("bluetoothctl connect FC:58:FA:7A:FE:79")
+                subprocess.run(["bluetoothctl", "connect", "FC:58:FA:7A:FE:79"])
                 errorPrinted = True
             sleep(2)
 
