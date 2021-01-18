@@ -78,8 +78,13 @@ def discoLights():
 
 
 def startDisco():
+    global ffThread
     if useGpio:
         led.blink()
+
+    if useThreading:
+        ffThread = threading.Thread(target=lookForFastForward)
+        ffThread.start()
 
     discoMusic()
     discoLights()
@@ -88,6 +93,9 @@ def startDisco():
 def stopDisco():
     if useGpio:
         led.on()
+
+    if useThreading:
+        ffThread.join()
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     spotify.pause_playback(device_id=spotifyDevice)
 
@@ -105,9 +113,7 @@ if useThreading:
 
 if __name__ == "__main__":
 
-    if useThreading:
-        ffThread = threading.Thread(target=lookForFastForward)
-        ffThread.start()
+
 
     if useGpio:
         from gpiozero import Button, LED
