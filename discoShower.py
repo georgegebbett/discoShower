@@ -130,7 +130,8 @@ if useThreading:
                             spotify.next_track()
                             print("Playing next song")
             except:
-                print("error")
+                pass
+
 
 if __name__ == "__main__":
 
