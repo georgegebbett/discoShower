@@ -11,7 +11,7 @@ def lookForFastForward():
             event = speakerButtons.read_one()
             print(type(event))
             print(isinstance(event, type(None)))
-            if not isinstance(event, evdev.KeyEvent):
+            if not isinstance(event, type(None)):
                 print("found good event")
                 if evdev.events.KeyEvent(event).keystate == 1:
                     if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
