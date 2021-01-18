@@ -171,6 +171,9 @@ if useThreading:
 
             except IOError:
                 print("Speaker disconnected")
+                if useLcd:
+                    lcd.clear()
+                    lcd.message = "Speaker discon.\nPush light swtch"
         else:
             print("Speaker disconnected")
         print("Bluetooth thread is over")
