@@ -139,6 +139,8 @@ if useThreading:
 
 
     def lookForFastForward():
+        print("Bluetooth thread started, running threads are:")
+        print(threading.enumerate())
         if path.exists('/dev/input/event0'):
             print("Speaker found, listening for presses")
             speakerButtons = evdev.InputDevice('/dev/input/event0')
@@ -154,9 +156,11 @@ if useThreading:
                         print("Attribute error, try again")
 
             except IOError:
-                print("Device not found")
+                print("Speaker disconnected")
         else:
-            print("Device not found")
+            print("Speaker disconnected")
+        print("Bluetooth thread is over")
+
 
 if __name__ == "__main__":
 
