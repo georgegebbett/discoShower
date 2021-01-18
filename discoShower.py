@@ -118,23 +118,22 @@ if useThreading:
 
 
     def lookForFastForward():
-        while True:
-            if not path.exists('/dev/input/event0'):
-                break
-            else:
-                try:
-                    speakerButtons = evdev.InputDevice('/dev/input/event0')
-                    event = speakerButtons.read()
-                    if type(event) != type(None):
-                        if evdev.events.KeyEvent(event).keystate == 1:
-                            if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
-                                spotify.next_track()
-                                print("Playing next song")
-                except:
-                    pass
+        if path.exists('/dev/input/event0'):
+            print("Speaker found, listening for presses")
+            speakerButtons = evdev.InputDevice('/dev/input/event0')
+            try:
+                events = speakerButtons.read_loop()
+                for event in events:
+                    print(event)
+            except IOError:
+                print("Device not found")
+        else:
+            print("Device not found")
 
 
 if __name__ == "__main__":
+
+    print(sys.version_info)
 
     if useGpio:
         from gpiozero import Button, LED
