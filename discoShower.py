@@ -1,5 +1,6 @@
 import configparser
 import sys
+import subprocess
 
 from time import sleep
 
@@ -8,7 +9,7 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from phue import Bridge
 
-from os import path
+from os import path, system
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -40,12 +41,21 @@ hueBridge.connect()
 
 
 def discoMusic():
-    spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
-    spotify.shuffle(device_id=spotifyDevice, state=True)
-    spotify.next_track(spotifyDevice)
-
+    errorPrinted = False
+    while True:
+        try:
+            spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
+            spotify.shuffle(device_id=spotifyDevice, state=True)
+            spotify.next_track(spotifyDevice)
+            break
+        except spotipy.SpotifyException:
+            if not errorPrinted:
+                print("Spotify Error, retrying")
+                errorPrinted = True
+            sleep(2)
 
 def discoLights():
+    print("Lights started")
     discoLightGroupId = hueBridge.get_group_id_by_name(groupName)
     allLights = hueBridge.get_light_objects('id')
     discoLightList = hueBridge.get_group(discoLightGroupId)['lights']
@@ -58,6 +68,7 @@ def discoLights():
 
     flashPass = 0
     nextColour = "red"
+    print("Disco started")
     while flashPass < discoTime:
         for light in discoLightList:
             discoLight = allLights[int(light)]
@@ -74,12 +85,13 @@ def discoLights():
         flashPass = flashPass + 1
         if not allLights[int(discoLightList[0])].on:
             stopDisco()
-            break
+            return
 
     stopDisco()
 
 
 def startDisco():
+    print("Starting disco")
     if checkForSpeaker():
         global ffThread
         if useGpio:
@@ -88,28 +100,38 @@ def startDisco():
         if useThreading:
             ffThread = threading.Thread(target=lookForFastForward)
             ffThread.start()
+            print("Bluetooth thread started")
 
         discoMusic()
+        print("Music started")
         discoLights()
 
 
 def stopDisco():
-    if useGpio:
-        led.on()
-
+    print("Stopping disco")
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
+    print("Lights stopped")
     spotify.pause_playback(device_id=spotifyDevice)
+    print("Music stopped")
+    print("Waiting for bluetooth thread to join")
     if useThreading:
         ffThread.join()
         ffThread.__init__()
-
+    print("Bluetooth thread joined")
+    if useGpio:
+        led.on()
+    print("Disco stopped")
 
 def checkForSpeaker():
-    if path.exists('/dev/input/event0'):
-        return True
-    else:
-        print("Speaker not connected, turn speaker on to continue")
-        return False
+    errorPrinted = False
+    while True:
+        if path.exists('/dev/input/event0'):
+            return True
+        else:
+            if not errorPrinted:
+                print("Speaker not connected, turn speaker off and on")
+                errorPrinted = True
+            sleep(2)
 
 
 if useThreading:
@@ -118,23 +140,35 @@ if useThreading:
 
 
     def lookForFastForward():
-        while True:
-            if not path.exists('/dev/input/event0'):
-                break
-            else:
-                try:
-                    speakerButtons = evdev.InputDevice('/dev/input/event0')
-                    event = speakerButtons.read
-                    if type(event()) != type(None):
+        print("Bluetooth thread started")
+        if path.exists('/dev/input/event0'):
+            print("Speaker found, listening for presses")
+            speakerButtons = evdev.InputDevice('/dev/input/event0')
+            try:
+                events = speakerButtons.read_loop()
+                for event in events:
+                    try:
                         if evdev.events.KeyEvent(event).keystate == 1:
                             if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                                 spotify.next_track()
                                 print("Playing next song")
-                except:
-                    pass
+                    except AttributeError:
+                        pass
+
+            except IOError:
+                print("Speaker disconnected")
+        else:
+            print("Speaker disconnected")
+        print("Bluetooth thread is over")
 
 
 if __name__ == "__main__":
+
+    if sys.version_info.major != 3:
+        print("Not compatible with Python 2, quitting")
+        sys.exit()
+    else:
+        print("Ready!")
 
     if useGpio:
         from gpiozero import Button, LED
