@@ -133,6 +133,7 @@ if useThreading:
                 print("Device not found")
         else:
             print("Device not found")
+            stopDisco()
 
 
 if __name__ == "__main__":
