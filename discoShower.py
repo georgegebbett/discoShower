@@ -15,6 +15,7 @@ config = configparser.ConfigParser()
 config.read('/home/pi/discoShower/config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
+useLcd = config['DEFAULT'].getboolean('useLcd')
 buttonPin = int(config['DEFAULT']['buttonPin'])
 ledPin = int(config['DEFAULT']['ledPin'])
 discoTime = int(int(config['DEFAULT']['discoTime']) / 1.5)
@@ -171,13 +172,31 @@ if __name__ == "__main__":
     else:
         print("Ready!")
 
+    if useLcd:
+        import board
+        import digitalio
+        import adafruit_character_lcd.character_lcd as characterlcd
+
+        lcd_columns = 16
+        lcd_rows = 2
+
+        lcd_rs = digitalio.DigitalInOut(board.D22)
+        lcd_en = digitalio.DigitalInOut(board.D17)
+        lcd_d4 = digitalio.DigitalInOut(board.D25)
+        lcd_d5 = digitalio.DigitalInOut(board.D24)
+        lcd_d6 = digitalio.DigitalInOut(board.D23)
+        lcd_d7 = digitalio.DigitalInOut(board.D18)
+
+        lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows)
+
     if useGpio:
         from gpiozero import Button, LED
         from signal import pause
-
         button = Button(buttonPin)
         led = LED(ledPin)
         led.on()
+        lcd.clear()
+        lcd.message = "Press button to start disco"
         button.when_pressed = startDisco
         pause()
     else:
