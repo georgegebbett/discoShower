@@ -109,12 +109,15 @@ def stopDisco():
 
 
 def checkForSpeaker():
-    if path.exists('/dev/input/event0'):
-        return True
-    else:
-        print("Speaker not connected, turn speaker on to continue")
-        sleep(2)
-        checkForSpeaker()
+    errorPrinted = False
+    while True:
+        if path.exists('/dev/input/event0'):
+            return True
+        else:
+            if not errorPrinted:
+                print("Speaker not connected, turn speaker on to continue")
+                errorPrinted = True
+            sleep(2)
 
 
 if useThreading:
