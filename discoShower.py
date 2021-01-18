@@ -117,7 +117,7 @@ def stopDisco():
         print("Waiting for bluetooth thread to join, turn speaker off to continue")
         if useLcd:
             lcd.clear()
-            lcd.message = "  Turn speaker off\nto continue"
+            lcd.message = "Turn speaker off\n  to continue"
         ffThread.join()
         ffThread.__init__()
         print("Bluetooth thread joined")
