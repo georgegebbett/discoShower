@@ -104,7 +104,6 @@ def startDisco():
         discoMusic()
         print("Music started")
         discoLights()
-        print("Disco started")
 
 
 def stopDisco():
@@ -146,10 +145,14 @@ if useThreading:
             try:
                 events = speakerButtons.read_loop()
                 for event in events:
-                    if evdev.events.KeyEvent(event).keystate == 1:
-                        if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
-                            spotify.next_track()
-                            print("Playing next song")
+                    try:
+                        if evdev.events.KeyEvent(event).keystate == 1:
+                            if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
+                                spotify.next_track()
+                                print("Playing next song")
+                    except AttributeError:
+                        print("Attribute error, try again")
+
             except IOError:
                 print("Device not found")
         else:
