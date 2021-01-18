@@ -8,7 +8,7 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from phue import Bridge
 
-from os import path
+from os import path, system
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -112,6 +112,8 @@ def stopDisco():
     print("Lights stopped")
     spotify.pause_playback(device_id=spotifyDevice)
     print("Music stopped")
+    print("Attempting speaker disconnect")
+    system("sudo hcitool dc FC:58:FA:7A:FE:79")
     print("Waiting for bluetooth thread to join")
     if useThreading:
         ffThread.join()
@@ -128,7 +130,8 @@ def checkForSpeaker():
             return True
         else:
             if not errorPrinted:
-                print("Speaker not connected, turn speaker on to continue")
+                print("Speaker not connected, attempting connection, turn speaker on to continue")
+                system("bluetoothctl connect FC:58:FA:7A:FE:79")
                 errorPrinted = True
             sleep(2)
 
