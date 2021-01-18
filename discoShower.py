@@ -133,10 +133,10 @@ if useThreading:
                 events = speakerButtons.read_loop()
                 for event in events:
                     print(evdev.events.KeyEvent(event))
-                    if evdev.events.KeyEvent(event).keystate == 1:
-                        if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
-                            spotify.next_track()
-                            print("Playing next song")
+                    # if evdev.events.KeyEvent(event).keystate == 1:
+                    #     if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
+                    #         spotify.next_track()
+                    #         print("Playing next song")
             except IOError:
                 print("Device not found")
         else:
