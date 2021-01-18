@@ -113,6 +113,7 @@ def stopDisco():
     print("Lights stopped")
     spotify.pause_playback(device_id=spotifyDevice)
     print("Music stopped")
+    print("Waiting for bluetooth thread to join")
     if useThreading:
         ffThread.join()
         ffThread.__init__()
