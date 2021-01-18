@@ -132,6 +132,7 @@ if useThreading:
             try:
                 events = speakerButtons.read_loop()
                 for event in events:
+                    print(evdev.events.KeyEvent(event))
                     if evdev.events.KeyEvent(event).keystate == 1:
                         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                             spotify.next_track()
