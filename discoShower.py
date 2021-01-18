@@ -46,7 +46,7 @@ def discoMusic():
         spotify.next_track(spotifyDevice)
     except spotipy.SpotifyException:
         print("Spotify Error")
-        sys.exit()
+        discoMusic()
 
 
 def discoLights():
@@ -113,7 +113,8 @@ def checkForSpeaker():
         return True
     else:
         print("Speaker not connected, turn speaker on to continue")
-        return False
+        sleep(2)
+        checkForSpeaker()
 
 
 if useThreading:
