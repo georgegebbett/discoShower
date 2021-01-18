@@ -80,7 +80,6 @@ def discoLights():
 
 
 def startDisco():
-
     if checkForSpeaker():
         global ffThread
         if useGpio:
@@ -98,10 +97,11 @@ def stopDisco():
     if useGpio:
         led.on()
 
-    if useThreading:
-        ffThread.join()
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     spotify.pause_playback(device_id=spotifyDevice)
+    if useThreading:
+        ffThread.join()
+        ffThread.__init__()
 
 
 def checkForSpeaker():
@@ -116,22 +116,22 @@ if useThreading:
     import threading
     import evdev
 
+
     def lookForFastForward():
-        errorPrinted = False
         while True:
+            if not path.exists('/dev/input/event0'):
+                break
             try:
                 speakerButtons = evdev.InputDevice('/dev/input/event0')
-                errorPrinted = False
-                for event in speakerButtons.read_loop():
+                event = speakerButtons.read()
+                if type(event) != type(None):
                     if evdev.events.KeyEvent(event).keystate == 1:
                         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                             spotify.next_track()
                             print("Playing next song")
             except:
-                if not errorPrinted:
-                    print("No Bluetooth Device Connected")
-                    errorPrinted = True
-                    sys.exit()
+                print("No Bluetooth Device Connected")
+                break
 
 if __name__ == "__main__":
 
