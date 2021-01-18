@@ -12,7 +12,7 @@ from phue import Bridge
 from os import path, system
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('/home/pi/config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
 buttonPin = int(config['DEFAULT']['buttonPin'])
