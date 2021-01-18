@@ -124,8 +124,8 @@ if useThreading:
             else:
                 try:
                     speakerButtons = evdev.InputDevice('/dev/input/event0')
-                    event = speakerButtons.read
-                    if type(event()) != type(None):
+                    event = speakerButtons.read()
+                    if type(event) != type(None):
                         if evdev.events.KeyEvent(event).keystate == 1:
                             if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                                 spotify.next_track()
