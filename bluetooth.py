@@ -7,6 +7,7 @@ def lookForFastForward():
         if not path.exists('/dev/input/event0'):
             break
         else:
+            speakerButtons = None
             if speakerButtons != evdev.InputDevice('/dev/input/event0'):
                 speakerButtons = evdev.InputDevice('/dev/input/event0')
             print(speakerButtons)
