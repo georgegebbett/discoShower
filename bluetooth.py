@@ -1,4 +1,5 @@
 import evdev
+from os import path
 
 
 def lookForFastForward():
