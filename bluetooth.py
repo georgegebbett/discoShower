@@ -3,12 +3,10 @@ from os import path
 
 
 def lookForFastForward():
-    speakerButtons = None
 
     if path.exists('/dev/input/event0'):
+        speakerButtons = evdev.InputDevice('/dev/input/event0')
         while True:
-            if speakerButtons != evdev.InputDevice('/dev/input/event0'):
-                speakerButtons = evdev.InputDevice('/dev/input/event0')
             event = speakerButtons.read_loop()
             print(event)
             break
