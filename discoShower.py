@@ -110,7 +110,7 @@ if useThreading:
                 speakerButtons = evdev.InputDevice('/dev/input/event0')
                 errorPrinted = False
                 for event in speakerButtons.read_loop():
-                    print(evdev.events.KeyEvent(event).key_up)
+                    print(evdev.events.KeyEvent(event).keystate)
                     print(evdev.events.KeyEvent(event).keycode)
                     if evdev.events.KeyEvent(event).key_up == 0:
                         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
