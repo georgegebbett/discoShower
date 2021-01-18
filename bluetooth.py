@@ -5,6 +5,9 @@ from os import path
 def lookForFastForward():
     if path.exists('/dev/input/event0'):
         speakerButtons = evdev.InputDevice('/dev/input/event0')
+        events = speakerButtons.read_loop()
+        for event in events:
+            print(event)
         # while True:
         #     event = speakerButtons.read_loop()
         #     print(event)
