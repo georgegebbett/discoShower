@@ -131,8 +131,7 @@ def checkForSpeaker():
             return True
         else:
             if not errorPrinted:
-                print("Speaker not connected, attempting connection, turn speaker on to continue")
-                subprocess.run(["bluetoothctl", "connect", "FC:58:FA:7A:FE:79"])
+                print("Speaker not connected, turn speaker off and on")
                 errorPrinted = True
             sleep(2)
 
