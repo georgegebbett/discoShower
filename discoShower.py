@@ -1,5 +1,5 @@
 import configparser
-
+import sys
 
 from time import sleep
 
@@ -7,6 +7,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 from phue import Bridge
+
+from os import path
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -78,16 +80,18 @@ def discoLights():
 
 
 def startDisco():
-    global ffThread
-    if useGpio:
-        led.blink()
 
-    if useThreading:
-        ffThread = threading.Thread(target=lookForFastForward)
-        ffThread.start()
+    if checkForSpeaker():
+        global ffThread
+        if useGpio:
+            led.blink()
 
-    discoMusic()
-    discoLights()
+        if useThreading:
+            ffThread = threading.Thread(target=lookForFastForward)
+            ffThread.start()
+
+        discoMusic()
+        discoLights()
 
 
 def stopDisco():
@@ -98,6 +102,15 @@ def stopDisco():
         ffThread.join()
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     spotify.pause_playback(device_id=spotifyDevice)
+
+
+def checkForSpeaker():
+    if path.exists('/dev/input/event0'):
+        return True
+    else:
+        print("Speaker not connected, turn speaker on to continue")
+        return False
+
 
 if useThreading:
     import threading
@@ -118,10 +131,9 @@ if useThreading:
                 if not errorPrinted:
                     print("No Bluetooth Device Connected")
                     errorPrinted = True
+                    sys.exit()
 
 if __name__ == "__main__":
-
-
 
     if useGpio:
         from gpiozero import Button, LED
