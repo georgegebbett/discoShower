@@ -40,9 +40,13 @@ hueBridge.connect()
 
 
 def discoMusic():
-    spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
-    spotify.shuffle(device_id=spotifyDevice, state=True)
-    spotify.next_track(spotifyDevice)
+    try:
+        spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
+        spotify.shuffle(device_id=spotifyDevice, state=True)
+        spotify.next_track(spotifyDevice)
+    except spotipy.SpotifyException:
+        print("Spotify Error")
+        sys.exit()
 
 
 def discoLights():
