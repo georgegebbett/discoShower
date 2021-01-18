@@ -10,7 +10,7 @@ def lookForFastForward():
             speakerButtons = evdev.InputDevice('/dev/input/event0')
             event = speakerButtons.read_one()
             print(type(event))
-            print(isinstance(event, None))
+            print(isinstance(event, NoneType))
             break
             if isinstance(event, evdev.KeyEvent):
                 print("found good event")
