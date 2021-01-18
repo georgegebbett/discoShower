@@ -2,6 +2,7 @@ import evdev
 from os import path
 
 
+
 def lookForFastForward():
     if path.exists('/dev/input/event0'):
         speakerButtons = evdev.InputDevice('/dev/input/event0')
@@ -11,16 +12,10 @@ def lookForFastForward():
                 print(event)
         except IOError:
             print("Device not found")
+    else:
+        print("Device not found")
 
-        # while True:
-        #     event = speakerButtons.read_loop()
-        #     print(event)
-        #     break
-        #     if not isinstance(event, type(None)):
-        #         print("found good event")
-        #         if evdev.events.KeyEvent(event).keystate == 1:
-        #             if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
-        #                 print("Playing next song")
+
 
 
 lookForFastForward()
