@@ -72,7 +72,7 @@ def discoLights():
     print("Disco started")
     if useLcd:
         lcd.clear()
-        lcd.message = "  Disco running\n   Have fun!"
+        lcd.message = " Disco running\n   Have fun!"
     while flashPass < discoTime:
         for light in discoLightList:
             discoLight = allLights[int(light)]
@@ -117,7 +117,7 @@ def stopDisco():
         print("Waiting for bluetooth thread to join, turn speaker off to continue")
         if useLcd:
             lcd.clear()
-            lcd.message = "Turn speaker off\nto continue"
+            lcd.message = "  Turn speaker off\nto continue"
         ffThread.join()
         ffThread.__init__()
         print("Bluetooth thread joined")
