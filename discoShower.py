@@ -113,8 +113,6 @@ def stopDisco():
     print("Lights stopped")
     spotify.pause_playback(device_id=spotifyDevice)
     print("Music stopped")
-    print("Attempting speaker disconnect")
-    subprocess.run(["bluetoothctl", "power", "off"])
     print("Waiting for bluetooth thread to join")
     if useThreading:
         ffThread.join()
@@ -127,7 +125,6 @@ def stopDisco():
 def checkForSpeaker():
     errorPrinted = False
     print("Turning on bluetooth")
-    subprocess.run(["bluetoothctl", "power", "on"])
     while True:
         if path.exists('/dev/input/event0'):
             return True
