@@ -124,7 +124,6 @@ def stopDisco():
 
 def checkForSpeaker():
     errorPrinted = False
-    print("Turning on bluetooth")
     while True:
         if path.exists('/dev/input/event0'):
             return True
