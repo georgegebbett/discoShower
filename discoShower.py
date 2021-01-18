@@ -12,7 +12,7 @@ from phue import Bridge
 from os import path, system
 
 config = configparser.ConfigParser()
-config.read('/home/pi/config.ini')
+config.read('/home/pi/discoShower/config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
 buttonPin = int(config['DEFAULT']['buttonPin'])
