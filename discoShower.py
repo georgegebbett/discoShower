@@ -40,14 +40,18 @@ hueBridge.connect()
 
 
 def discoMusic():
-    try:
-        spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
-        spotify.shuffle(device_id=spotifyDevice, state=True)
-        spotify.next_track(spotifyDevice)
-    except spotipy.SpotifyException:
-        print("Spotify Error")
-        discoMusic()
-
+    errorPrinted = False
+    while True:
+        try:
+            spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
+            spotify.shuffle(device_id=spotifyDevice, state=True)
+            spotify.next_track(spotifyDevice)
+            break
+        except spotipy.SpotifyException:
+            if not errorPrinted:
+                print("Spotify Error, retrying")
+                errorPrinted = True
+            sleep(2)
 
 def discoLights():
     discoLightGroupId = hueBridge.get_group_id_by_name(groupName)
@@ -132,7 +136,6 @@ if useThreading:
             try:
                 events = speakerButtons.read_loop()
                 for event in events:
-                    # print(evdev.events.KeyEvent(event).keystate == 1)
                     if evdev.events.KeyEvent(event).keystate == 1:
                         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                             spotify.next_track()
