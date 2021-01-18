@@ -168,6 +168,8 @@ if __name__ == "__main__":
     if sys.version_info.major != 3:
         print("Not compatible with Python 2, quitting")
         sys.exit()
+    else:
+        print("Ready!")
 
     if useGpio:
         from gpiozero import Button, LED
