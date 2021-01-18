@@ -84,7 +84,7 @@ def discoLights():
         flashPass = flashPass + 1
         if not allLights[int(discoLightList[0])].on:
             stopDisco()
-            break
+            return
 
     stopDisco()
 
