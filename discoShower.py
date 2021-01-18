@@ -70,13 +70,14 @@ def discoLights():
     flashPass = 0
     nextColour = "red"
     print("Disco started")
+    timeElapsed = 0
     while flashPass < discoTime:
         if useLcd:
             lcd.clear()
-            if flashPass % 2 == 0:
+            if timeElapsed % 2 == 0:
                 lcd.message = " Disco running\n   Have fun!"
             else:
-                lcd.message = "Current song:\n" + spotify.current_user_playing_track()['item']['name'].ljust(16)
+                lcd.message = "Current song:\n" + spotify.current_user_playing_track()['item']['name'].center(16)
         for light in discoLightList:
             discoLight = allLights[int(light)]
             if nextColour == "red":
@@ -85,6 +86,7 @@ def discoLights():
             elif nextColour == "blue":
                 discoLight.hue = 46920
                 nextColour = "green"
+                timeElapsed += 1
             elif nextColour == "green":
                 discoLight.hue = 25500
                 nextColour = "red"
