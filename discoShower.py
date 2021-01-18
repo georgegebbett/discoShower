@@ -54,6 +54,7 @@ def discoMusic():
             sleep(2)
 
 def discoLights():
+    print("Lights started")
     discoLightGroupId = hueBridge.get_group_id_by_name(groupName)
     allLights = hueBridge.get_light_objects('id')
     discoLightList = hueBridge.get_group(discoLightGroupId)['lights']
@@ -66,6 +67,7 @@ def discoLights():
 
     flashPass = 0
     nextColour = "red"
+    print("Disco started")
     while flashPass < discoTime:
         for light in discoLightList:
             discoLight = allLights[int(light)]
@@ -102,7 +104,6 @@ def startDisco():
         discoMusic()
         print("Music started")
         discoLights()
-        print("Lights started")
         print("Disco started")
 
 
@@ -152,7 +153,6 @@ if useThreading:
                 print("Device not found")
         else:
             print("Device not found")
-            stopDisco()
 
 if __name__ == "__main__":
 
