@@ -71,6 +71,7 @@ def discoLights():
     nextColour = "red"
     print("Disco started")
     if useLcd:
+        lcd.clear()
         lcd.message = "  Disco running\n   Have fun!"
     while flashPass < discoTime:
         for light in discoLightList:
@@ -115,6 +116,7 @@ def stopDisco():
     if useThreading:
         print("Waiting for bluetooth thread to join, turn speaker off to continue")
         if useLcd:
+            lcd.clear()
             lcd.message = "Turn speaker off\nto continue"
         ffThread.join()
         ffThread.__init__()
@@ -128,6 +130,7 @@ def stopDisco():
     print("Disco stopped")
     print("Ready!")
     if useLcd:
+        lcd.clear()
         lcd.message = "Press button to \n  start disco"
 
 def checkForSpeaker():
@@ -138,7 +141,8 @@ def checkForSpeaker():
         else:
             if not errorPrinted:
                 if useLcd:
-                    lcd.message = "Turn speaker on\nto continue"
+                    lcd.clear()
+                    lcd.message = "Turn speaker on\n  to continue"
                 print("Speaker not connected, turn speaker off and on")
                 errorPrinted = True
             sleep(2)
