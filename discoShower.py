@@ -109,18 +109,19 @@ def startDisco():
 
 def stopDisco():
     print("Stopping disco")
+    if useThreading:
+        print("Waiting for bluetooth thread to join, turn speaker off to continue")
+        ffThread.join()
+        ffThread.__init__()
+        print("Bluetooth thread joined")
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
     print("Lights stopped")
     spotify.pause_playback(device_id=spotifyDevice)
     print("Music stopped")
-    print("Waiting for bluetooth thread to join")
-    if useThreading:
-        ffThread.join()
-        ffThread.__init__()
-    print("Bluetooth thread joined")
     if useGpio:
         led.on()
     print("Disco stopped")
+    print("Ready!")
 
 def checkForSpeaker():
     errorPrinted = False
