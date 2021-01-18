@@ -139,8 +139,7 @@ if useThreading:
 
 
     def lookForFastForward():
-        print("Bluetooth thread started, running threads are:")
-        print(threading.enumerate())
+        print("Bluetooth thread started")
         if path.exists('/dev/input/event0'):
             print("Speaker found, listening for presses")
             speakerButtons = evdev.InputDevice('/dev/input/event0')
@@ -164,7 +163,9 @@ if useThreading:
 
 if __name__ == "__main__":
 
-    print(sys.version_info.major)
+    if sys.version_info.major != 3:
+        print("Not compatible with Python 2, quitting")
+        sys.exit()
 
     if useGpio:
         from gpiozero import Button, LED
