@@ -4,6 +4,10 @@ import time
 
 
 def lookForFastForward():
+    devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+    for device in devices:
+        print(device.path, device.name, device.phys)
+
     if path.exists('/dev/input/event0'):
         speakerButtons = evdev.InputDevice('/dev/input/event0')
         print(speakerButtons.leds())
