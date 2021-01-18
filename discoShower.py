@@ -114,7 +114,7 @@ def stopDisco():
     spotify.pause_playback(device_id=spotifyDevice)
     print("Music stopped")
     print("Attempting speaker disconnect")
-    subprocess.run(["sudo", "hcitool", "dc", "FC:58:FA:7A:FE:79"])
+    subprocess.run(["bluetoothctl", "power", "off"])
     print("Waiting for bluetooth thread to join")
     if useThreading:
         ffThread.join()
@@ -126,6 +126,8 @@ def stopDisco():
 
 def checkForSpeaker():
     errorPrinted = False
+    print("Turning on bluetooth")
+    subprocess.run(["bluetoothctl", "power", "on"])
     while True:
         if path.exists('/dev/input/event0'):
             return True
@@ -155,7 +157,7 @@ if useThreading:
                                 spotify.next_track()
                                 print("Playing next song")
                     except AttributeError:
-                        print("Attribute error, try again")
+                        pass
 
             except IOError:
                 print("Speaker disconnected")
