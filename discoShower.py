@@ -70,6 +70,8 @@ def discoLights():
     flashPass = 0
     nextColour = "red"
     print("Disco started")
+    if useLcd:
+        lcd.message = "  Disco running\n   Have fun!"
     while flashPass < discoTime:
         for light in discoLightList:
             discoLight = allLights[int(light)]
@@ -112,6 +114,8 @@ def stopDisco():
     print("Stopping disco")
     if useThreading:
         print("Waiting for bluetooth thread to join, turn speaker off to continue")
+        if useLcd:
+            lcd.message = "Turn speaker off\nto continue"
         ffThread.join()
         ffThread.__init__()
         print("Bluetooth thread joined")
@@ -123,6 +127,8 @@ def stopDisco():
         led.on()
     print("Disco stopped")
     print("Ready!")
+    if useLcd:
+        lcd.message = "Press button to \n  start disco"
 
 def checkForSpeaker():
     errorPrinted = False
@@ -131,6 +137,8 @@ def checkForSpeaker():
             return True
         else:
             if not errorPrinted:
+                if useLcd:
+                    lcd.message = "Turn speaker on\nto continue"
                 print("Speaker not connected, turn speaker off and on")
                 errorPrinted = True
             sleep(2)
@@ -189,14 +197,15 @@ if __name__ == "__main__":
 
         lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows)
 
+        lcd.clear()
+        lcd.message = "Press button to \n  start disco"
+
     if useGpio:
         from gpiozero import Button, LED
         from signal import pause
         button = Button(buttonPin)
         led = LED(ledPin)
         led.on()
-        lcd.clear()
-        lcd.message = "Press button to \nstart disco"
         button.when_pressed = startDisco
         pause()
     else:
