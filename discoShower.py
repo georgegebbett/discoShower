@@ -77,7 +77,7 @@ def discoLights():
                 lcd.message = " Disco running\n   Have fun!"
             else:
                 # lcd.message = spotify.current_user_playing_track()
-                print(spotify.current_user_playing_track())
+                print(spotify.current_user_playing_track()['name'])
         for light in discoLightList:
             discoLight = allLights[int(light)]
             if nextColour == "red":
