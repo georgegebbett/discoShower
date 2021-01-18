@@ -97,6 +97,7 @@ def startDisco():
         if useThreading:
             ffThread = threading.Thread(target=lookForFastForward)
             ffThread.start()
+            print("Bluetooth thread started")
 
         discoMusic()
         print("Music started")
