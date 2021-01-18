@@ -88,6 +88,7 @@ def discoLights():
 
 
 def startDisco():
+    print("Starting disco")
     if checkForSpeaker():
         global ffThread
         if useGpio:
@@ -98,19 +99,25 @@ def startDisco():
             ffThread.start()
 
         discoMusic()
+        print("Music started")
         discoLights()
+        print("Lights started")
+        print("Disco started")
 
 
 def stopDisco():
-    if useGpio:
-        led.on()
-
+    print("Stopping disco")
     hueBridge.run_scene(group_name=groupName, scene_name=sceneName)
+    print("Lights stopped")
     spotify.pause_playback(device_id=spotifyDevice)
+    print("Music stopped")
     if useThreading:
         ffThread.join()
         ffThread.__init__()
-
+    print("Bluetooth thread joined")
+    if useGpio:
+        led.on()
+    print("Disco stopped")
 
 def checkForSpeaker():
     errorPrinted = False
