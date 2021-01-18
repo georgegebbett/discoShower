@@ -196,7 +196,7 @@ if __name__ == "__main__":
         led = LED(ledPin)
         led.on()
         lcd.clear()
-        lcd.message = "Press button to start disco"
+        lcd.message = "Press button to \nstart disco"
         button.when_pressed = startDisco
         pause()
     else:
