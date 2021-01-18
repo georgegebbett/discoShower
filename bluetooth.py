@@ -3,11 +3,11 @@ from os import path
 
 
 def lookForFastForward():
+    speakerButtons = None
     while True:
         if not path.exists('/dev/input/event0'):
             break
         else:
-            speakerButtons = None
             if speakerButtons != evdev.InputDevice('/dev/input/event0'):
                 speakerButtons = evdev.InputDevice('/dev/input/event0')
             print(speakerButtons)
