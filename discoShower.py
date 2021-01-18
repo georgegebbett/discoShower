@@ -110,11 +110,10 @@ if useThreading:
                 speakerButtons = evdev.InputDevice('/dev/input/event0')
                 errorPrinted = False
                 for event in speakerButtons.read_loop():
-                    print(evdev.events.KeyEvent(event).keystate)
-                    print(evdev.events.KeyEvent(event).keycode)
                     if evdev.events.KeyEvent(event).keystate == 1:
                         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                             spotify.next_track()
+                            print("Playing next song")
             except:
                 if not errorPrinted:
                     print("No Bluetooth Device Connected")
