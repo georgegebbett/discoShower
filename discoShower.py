@@ -111,7 +111,7 @@ if useThreading:
                     if evdev.events.KeyEvent(event).key_up == 0:
                         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                             spotify.next_track()
-            except TypeError:
+            except:
                 print("Bluetooth error")
 
 if __name__ == "__main__":
