@@ -104,15 +104,19 @@ if useThreading:
     import evdev
 
     def lookForFastForward():
+        errorPrinted = False
         while True:
             try:
                 speakerButtons = evdev.InputDevice('/dev/input/event0')
+                errorPrinted = False
                 for event in speakerButtons.read_loop():
                     if evdev.events.KeyEvent(event).key_up == 0:
                         if evdev.events.KeyEvent(event).keycode == "KEY_NEXTSONG":
                             spotify.next_track()
             except:
-                print("Bluetooth error")
+                if not errorPrinted:
+                    print("No Bluetooth Device Connected")
+                    errorPrinted = True
 
 if __name__ == "__main__":
 
