@@ -8,7 +8,7 @@ def lookForFastForward():
         speakerButtons = evdev.InputDevice('/dev/input/event0')
         print(speakerButtons.capabilities(verbose=True))
         print(speakerButtons.input_props(verbose=True))
-        speakerButtons.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_POWER2, 1)
+        # speakerButtons.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_POWER2, 1)
         speakerButtons.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_VOLUMEUP, 1)
 
 
