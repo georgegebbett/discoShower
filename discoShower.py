@@ -130,8 +130,7 @@ if useThreading:
                             spotify.next_track()
                             print("Playing next song")
             except:
-                print("No Bluetooth Device Connected")
-                break
+                print("error")
 
 if __name__ == "__main__":
 
