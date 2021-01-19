@@ -75,7 +75,6 @@ def discoLights():
         if useLcd:
             if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16):
                 lcd.clear()
-                #lol
                 lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16)
         for light in discoLightList:
             discoLight = allLights[int(light)]
