@@ -33,6 +33,8 @@ spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=spotifyClientId, c
                                                     redirect_uri=spotifyRedirectUri, scope=spotifyScope,
                                                     open_browser=False, username=spotifyUsername))
 
+stopDiscoVar = False
+
 hueBridgeIp = config['hue']['bridgeIp']
 groupName = config['hue']['groupName']
 sceneName = config['hue']['sceneName']
@@ -90,15 +92,14 @@ def discoLights():
                 nextColour = "red"
         sleep(0.5)
         flashPass = flashPass + 1
-        if not allLights[int(discoLightList[0])].on:
-            stopDisco()
+        if stopDiscoVar:
             return
-
-    stopDisco()
 
 
 def startDisco():
+    global stopDiscoVar
     print("Starting disco")
+    stopDiscoVar = False
     if checkForSpeaker():
         global ffThread
         if useGpio:
@@ -115,6 +116,8 @@ def startDisco():
 
 
 def stopDisco():
+    global stopDiscoVar
+    stopDiscoVar = True
     print("Stopping disco")
     if useThreading:
         print("Waiting for bluetooth thread to join, turn speaker off to continue")
@@ -174,6 +177,7 @@ if useThreading:
 
             except IOError:
                 print("Speaker disconnected")
+                stopDisco()
                 if useLcd:
                     lcd.clear()
                     lcd.message = "Speaker discon.\nPush light swtch"
