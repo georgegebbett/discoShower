@@ -33,8 +33,6 @@ spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=spotifyClientId, c
                                                     redirect_uri=spotifyRedirectUri, scope=spotifyScope,
                                                     open_browser=False, username=spotifyUsername))
 
-stopDiscoVar = False
-
 hueBridgeIp = config['hue']['bridgeIp']
 groupName = config['hue']['groupName']
 sceneName = config['hue']['sceneName']
@@ -75,9 +73,14 @@ def discoLights():
     timeElapsed = 0
     while flashPass < discoTime:
         if useLcd:
-            if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16):
-                lcd.clear()
-                lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16)
+            if timeElapsed % 2 == 0:
+                if lcd.message != " Disco running\n   Have fun!":
+                    lcd.clear()
+                    lcd.message = " Disco running\n   Have fun!"
+            else:
+                if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16):
+                    lcd.clear()
+                    lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16)
         for light in discoLightList:
             discoLight = allLights[int(light)]
             if nextColour == "red":
@@ -92,14 +95,15 @@ def discoLights():
                 nextColour = "red"
         sleep(0.5)
         flashPass = flashPass + 1
-        if stopDiscoVar:
+        if not allLights[int(discoLightList[0])].on:
+            stopDisco()
             return
+
+    stopDisco()
 
 
 def startDisco():
-    global stopDiscoVar
     print("Starting disco")
-    stopDiscoVar = False
     if checkForSpeaker():
         global ffThread
         if useGpio:
@@ -116,8 +120,6 @@ def startDisco():
 
 
 def stopDisco():
-    global stopDiscoVar
-    stopDiscoVar = True
     print("Stopping disco")
     if useThreading:
         print("Waiting for bluetooth thread to join, turn speaker off to continue")
@@ -177,7 +179,6 @@ if useThreading:
 
             except IOError:
                 print("Speaker disconnected")
-                stopDisco()
                 if useLcd:
                     lcd.clear()
                     lcd.message = "Speaker discon.\nPush light swtch"
