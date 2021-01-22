@@ -51,6 +51,9 @@ def discoMusic():
             break
         except spotipy.SpotifyException:
             if not errorPrinted:
+                if useLcd:
+                    lcd.clear()
+                    lcd.message("Spotify Error".center(16) + "\n" + "Retrying...".center(16))
                 print("Spotify Error, retrying")
                 errorPrinted = True
             sleep(2)
