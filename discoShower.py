@@ -1,29 +1,28 @@
+import ast
 import configparser
 import sys
-import subprocess
-import ast
 
+from os import path
 from time import sleep
 
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-
 from phue import Bridge
-
-from os import path, system
+from spotipy.oauth2 import SpotifyOAuth
 
 config = configparser.ConfigParser()
 config.read('/home/pi/discoShower/config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
 useLcd = config['DEFAULT'].getboolean('useLcd')
-startButtonPin = int(config['DEFAULT']['buttonPin'])
-ledPin = int(config['DEFAULT']['ledPin'])
-nextUserButtonPin = int(config['DEFAULT']['nextUserButtonPin'])
+if useGpio:
+    startButtonPin = int(config['DEFAULT']['buttonPin'])
+    ledPin = int(config['DEFAULT']['ledPin'])
+if useLcd:
+    nextUserButtonPin = int(config['DEFAULT']['nextUserButtonPin'])
+    users = ast.literal_eval(config['users']['users'])
 discoTime = int(int(config['DEFAULT']['discoTime']) / 1.5)
 useThreading = config['DEFAULT'].getboolean('useThreading')
 
-users = ast.literal_eval(config['users']['users'])
 
 
 spotifyClientId = config['spotify']['clientId']
@@ -50,7 +49,10 @@ def discoMusic():
     errorPrinted = False
     while True:
         try:
-            spotify.start_playback(device_id=spotifyDevice, context_uri=users[list(users.keys())[currentUser]])
+            if useLcd:
+                spotify.start_playback(device_id=spotifyDevice, context_uri=users[list(users.keys())[currentUser]])
+            else:
+                spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
             spotify.shuffle(device_id=spotifyDevice, state=True)
             spotify.next_track(spotifyDevice)
             break
@@ -159,12 +161,13 @@ def checkForSpeaker():
 
 def nextUser():
     global currentUser
-    if currentUser < len(users)-1:
-        currentUser += 1
-    else:
-        currentUser = 0
+    if useLcd:
+        if currentUser < len(users)-1:
+            currentUser += 1
+        else:
+            currentUser = 0
 
-    displayMainMenu()
+        displayMainMenu()
 
 
 
@@ -236,12 +239,13 @@ if __name__ == "__main__":
     if useGpio:
         from gpiozero import Button, LED
         from signal import pause
+        if useLcd:
+            nextUserButton = Button(nextUserButtonPin)
+            nextUserButton.when_pressed = nextUser
         startButton = Button(startButtonPin)
-        nextUserButton = Button(nextUserButtonPin)
         led = LED(ledPin)
         led.on()
         startButton.when_pressed = startDisco
-        nextUserButton.when_pressed = nextUser
         pause()
     else:
         startDisco()
