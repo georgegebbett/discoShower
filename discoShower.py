@@ -201,7 +201,7 @@ if __name__ == "__main__":
         print("Ready!")
         print(users)
         print(type(users))
-        currentUser = users[users.keys()[0]]
+        currentUser = users[list(users.keys())[0]]
 
     if useLcd:
         import board
