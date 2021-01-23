@@ -46,6 +46,8 @@ Non-standard dependencies (on Raspbian) are [spotipy](https://github.com/plamere
 
 If you are not using a desktop version of Raspbian, you will need to install [gpiozero](https://github.com/gpiozero/gpiozero), again available on pip.
 
+To use an LCD screen, you will need to install [adafruit_character_lcd](https://github.com/adafruit/Adafruit_CircuitPython_CharLCD)
+
 If you want to use the buttons on the Bluetooth speaker to control the songs, set `useThreading` to `True` and make sure you have [evdev](https://github.com/gvalkov/python-evdev) installed.
 
 You can run `spotifyUtils.py` to get a list of your Spotify devices and their IDs, as well as the names of your Hue groups. This too requires a config file in the same directory.
