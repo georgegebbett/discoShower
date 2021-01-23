@@ -159,7 +159,7 @@ def checkForSpeaker():
 
 def nextUser():
     global currentUser
-    if currentUser < len(users):
+    if currentUser < len(users)-1:
         currentUser += 1
     else:
         currentUser = 0
