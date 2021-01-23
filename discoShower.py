@@ -140,8 +140,7 @@ def stopDisco():
     print("Disco stopped")
     print("Ready!")
     if useLcd:
-        lcd.clear()
-        lcd.message = "Press button to \n  start disco"
+        displayMainMenu()
 
 def checkForSpeaker():
     errorPrinted = False
@@ -157,6 +156,10 @@ def checkForSpeaker():
                 errorPrinted = True
             sleep(2)
 
+
+def displayMainMenu():
+    lcd.clear()
+    lcd.message = " Press to start\n" + ("User: " + currentUser).center(16)
 
 if useThreading:
     import threading
@@ -198,6 +201,7 @@ if __name__ == "__main__":
         print("Ready!")
         print(users)
         print(type(users))
+        currentUser = users[users.keys()[0]]
 
     if useLcd:
         import board
@@ -216,8 +220,7 @@ if __name__ == "__main__":
 
         lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows)
 
-        lcd.clear()
-        lcd.message = "Press button to \n  start disco"
+        displayMainMenu()
 
     if useGpio:
         from gpiozero import Button, LED
