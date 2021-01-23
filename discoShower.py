@@ -197,6 +197,7 @@ if __name__ == "__main__":
     else:
         print("Ready!")
         print(users)
+        print(type(users))
 
     if useLcd:
         import board
