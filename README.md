@@ -38,7 +38,7 @@ users = {
     'userName3': 'spotifyPlaylistUri'
     }
 ```
-**There are no quotes needed in the config file**
+**There are no quotes needed in the config file, apart from in the users dictionary**
 
 You will have to create a Spotify application in their developer portal to get a client ID and secret. Your redirect URI does not necessarily need to be accessible.
 
