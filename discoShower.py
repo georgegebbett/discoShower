@@ -50,7 +50,7 @@ def discoMusic():
     errorPrinted = False
     while True:
         try:
-            spotify.start_playback(device_id=spotifyDevice, context_uri=users[list(users.keys())[currentUser])])
+            spotify.start_playback(device_id=spotifyDevice, context_uri=users[list(users.keys())[currentUser]])
             spotify.shuffle(device_id=spotifyDevice, state=True)
             spotify.next_track(spotifyDevice)
             break
