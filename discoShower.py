@@ -1,6 +1,7 @@
 import configparser
 import sys
 import subprocess
+import ast
 
 from time import sleep
 
@@ -20,6 +21,9 @@ buttonPin = int(config['DEFAULT']['buttonPin'])
 ledPin = int(config['DEFAULT']['ledPin'])
 discoTime = int(int(config['DEFAULT']['discoTime']) / 1.5)
 useThreading = config['DEFAULT'].getboolean('useThreading')
+
+users = ast.literal_eval(config['users']['users'])
+
 
 spotifyClientId = config['spotify']['clientId']
 spotifyClientSecret = config['spotify']['clientSecret']
@@ -192,6 +196,7 @@ if __name__ == "__main__":
         sys.exit()
     else:
         print("Ready!")
+        print(users)
 
     if useLcd:
         import board
