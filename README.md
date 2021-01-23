@@ -9,8 +9,10 @@ I have discoShower running on a Pi Zero, which is also running an instance of [s
 You will need a `config.ini` file in the same directory as `discoShower.py`. the config file is set out as follows:
 ```
 [DEFAULT]
-useGpio = False
+useGpio = trueIfYouWantToUseAPhysicalButton
+useLcd = trueIfYouHaveAnLcdScreen
 buttonPin = gpioPinOfYourButton
+nextUserButtonPin = gpioPinOfTheButtonToGetTheNextUser
 ledPin = gpioPinOfYourLed
 discoTime = defaultDiscoLengthInSeconds
 useThreading = trueIfYouWantToBeAbleToSkipSongs
@@ -28,6 +30,13 @@ device = yourDeviceId
 bridgeIp = yourHueBridgeIp
 groupName = yourGroupName
 sceneName = yourSceneName
+
+[users]
+users = {
+    'userName1': 'spotifyPlaylistUri',
+    'userName2': 'spotifyPlaylistUri', 
+    'userName3': 'spotifyPlaylistUri'
+    }
 ```
 **There are no quotes needed in the config file**
 
