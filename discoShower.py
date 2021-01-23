@@ -17,8 +17,9 @@ config.read('/home/pi/discoShower/config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
 useLcd = config['DEFAULT'].getboolean('useLcd')
-buttonPin = int(config['DEFAULT']['buttonPin'])
+startButtonPin = int(config['DEFAULT']['buttonPin'])
 ledPin = int(config['DEFAULT']['ledPin'])
+nextUserButtonPin = int(config['DEFAULT']['nextUserButtonPin'])
 discoTime = int(int(config['DEFAULT']['discoTime']) / 1.5)
 useThreading = config['DEFAULT'].getboolean('useThreading')
 
@@ -49,7 +50,7 @@ def discoMusic():
     errorPrinted = False
     while True:
         try:
-            spotify.start_playback(device_id=spotifyDevice, context_uri=users[currentUser])
+            spotify.start_playback(device_id=spotifyDevice, context_uri=users[list(users.keys())[currentUser])])
             spotify.shuffle(device_id=spotifyDevice, state=True)
             spotify.next_track(spotifyDevice)
             break
@@ -156,10 +157,20 @@ def checkForSpeaker():
                 errorPrinted = True
             sleep(2)
 
+def nextUser():
+    global currentUser
+    if currentUser < len(users):
+        currentUser += 1
+    else:
+        currentUser = 0
+
+    displayMainMenu()
+
+
 
 def displayMainMenu():
     lcd.clear()
-    lcd.message = " Press to start\n" + ("User: " + currentUser).center(16)
+    lcd.message = " Press to start\n" + ("User: " + list(users.keys())[currentUser]).center(16)
 
 if useThreading:
     import threading
@@ -201,7 +212,7 @@ if __name__ == "__main__":
         print("Ready!")
         print(users)
         print(type(users))
-        currentUser = list(users.keys())[0]
+        currentUser = 0
 
     if useLcd:
         import board
@@ -225,10 +236,12 @@ if __name__ == "__main__":
     if useGpio:
         from gpiozero import Button, LED
         from signal import pause
-        button = Button(buttonPin)
+        startButton = Button(startButtonPin)
+        nextUserButton = Button(nextUserButtonPin)
         led = LED(ledPin)
         led.on()
-        button.when_pressed = startDisco
+        startButton.when_pressed = startDisco
+        nextUserButton.when_pressed = nextUser
         pause()
     else:
         startDisco()
