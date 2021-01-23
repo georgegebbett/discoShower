@@ -1,24 +1,29 @@
+import ast
 import configparser
 import sys
-import subprocess
 
+from os import path
 from time import sleep
 
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-
 from phue import Bridge
-
-from os import path, system
+from spotipy.oauth2 import SpotifyOAuth
 
 config = configparser.ConfigParser()
 config.read('/home/pi/discoShower/config.ini')
 
 useGpio = config['DEFAULT'].getboolean('useGpio')
-buttonPin = int(config['DEFAULT']['buttonPin'])
-ledPin = int(config['DEFAULT']['ledPin'])
+useLcd = config['DEFAULT'].getboolean('useLcd')
+if useGpio:
+    startButtonPin = int(config['DEFAULT']['buttonPin'])
+    ledPin = int(config['DEFAULT']['ledPin'])
+if useLcd:
+    nextUserButtonPin = int(config['DEFAULT']['nextUserButtonPin'])
+    users = ast.literal_eval(config['users']['users'])
 discoTime = int(int(config['DEFAULT']['discoTime']) / 1.5)
 useThreading = config['DEFAULT'].getboolean('useThreading')
+
+
 
 spotifyClientId = config['spotify']['clientId']
 spotifyClientSecret = config['spotify']['clientSecret']
@@ -44,12 +49,18 @@ def discoMusic():
     errorPrinted = False
     while True:
         try:
-            spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
+            if useLcd:
+                spotify.start_playback(device_id=spotifyDevice, context_uri=users[list(users.keys())[currentUser]])
+            else:
+                spotify.start_playback(device_id=spotifyDevice, context_uri=spotifyPlaylist)
             spotify.shuffle(device_id=spotifyDevice, state=True)
             spotify.next_track(spotifyDevice)
             break
         except spotipy.SpotifyException:
             if not errorPrinted:
+                if useLcd:
+                    lcd.clear()
+                    lcd.message = "Spotify Error".center(16) + "\n" + "Retrying...".center(16)
                 print("Spotify Error, retrying")
                 errorPrinted = True
             sleep(2)
@@ -69,7 +80,12 @@ def discoLights():
     flashPass = 0
     nextColour = "red"
     print("Disco started")
+    timeElapsed = 0
     while flashPass < discoTime:
+        if useLcd:
+            if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16):
+                lcd.clear()
+                lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16)
         for light in discoLightList:
             discoLight = allLights[int(light)]
             if nextColour == "red":
@@ -78,6 +94,7 @@ def discoLights():
             elif nextColour == "blue":
                 discoLight.hue = 46920
                 nextColour = "green"
+                timeElapsed += 1
             elif nextColour == "green":
                 discoLight.hue = 25500
                 nextColour = "red"
@@ -111,6 +128,9 @@ def stopDisco():
     print("Stopping disco")
     if useThreading:
         print("Waiting for bluetooth thread to join, turn speaker off to continue")
+        if useLcd:
+            lcd.clear()
+            lcd.message = "Turn speaker off\n  to continue"
         ffThread.join()
         ffThread.__init__()
         print("Bluetooth thread joined")
@@ -122,6 +142,8 @@ def stopDisco():
         led.on()
     print("Disco stopped")
     print("Ready!")
+    if useLcd:
+        displayMainMenu()
 
 def checkForSpeaker():
     errorPrinted = False
@@ -130,10 +152,28 @@ def checkForSpeaker():
             return True
         else:
             if not errorPrinted:
+                if useLcd:
+                    lcd.clear()
+                    lcd.message = "Turn speaker on\n  to continue"
                 print("Speaker not connected, turn speaker off and on")
                 errorPrinted = True
             sleep(2)
 
+def nextUser():
+    global currentUser
+    if useLcd:
+        if currentUser < len(users)-1:
+            currentUser += 1
+        else:
+            currentUser = 0
+
+        displayMainMenu()
+
+
+
+def displayMainMenu():
+    lcd.clear()
+    lcd.message = " Press to start\n" + ("User: " + list(users.keys())[currentUser]).center(16)
 
 if useThreading:
     import threading
@@ -158,6 +198,9 @@ if useThreading:
 
             except IOError:
                 print("Speaker disconnected")
+                if useLcd:
+                    lcd.clear()
+                    lcd.message = "Speaker discon.\nPush light swtch"
         else:
             print("Speaker disconnected")
         print("Bluetooth thread is over")
@@ -170,15 +213,39 @@ if __name__ == "__main__":
         sys.exit()
     else:
         print("Ready!")
+        print(users)
+        print(type(users))
+        currentUser = 0
+
+    if useLcd:
+        import board
+        import digitalio
+        import adafruit_character_lcd.character_lcd as characterlcd
+
+        lcd_columns = 16
+        lcd_rows = 2
+
+        lcd_rs = digitalio.DigitalInOut(board.D22)
+        lcd_en = digitalio.DigitalInOut(board.D17)
+        lcd_d4 = digitalio.DigitalInOut(board.D25)
+        lcd_d5 = digitalio.DigitalInOut(board.D24)
+        lcd_d6 = digitalio.DigitalInOut(board.D23)
+        lcd_d7 = digitalio.DigitalInOut(board.D18)
+
+        lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows)
+
+        displayMainMenu()
 
     if useGpio:
         from gpiozero import Button, LED
         from signal import pause
-
-        button = Button(buttonPin)
+        if useLcd:
+            nextUserButton = Button(nextUserButtonPin)
+            nextUserButton.when_pressed = nextUser
+        startButton = Button(startButtonPin)
         led = LED(ledPin)
         led.on()
-        button.when_pressed = startDisco
+        startButton.when_pressed = startDisco
         pause()
     else:
         startDisco()
