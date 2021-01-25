@@ -2,7 +2,7 @@ import ast
 import configparser
 import sys
 
-from os import path
+from os import path, system
 from time import sleep
 
 import spotipy
@@ -61,6 +61,7 @@ def discoMusic():
                 if useLcd:
                     lcd.clear()
                     lcd.message = "Spotify Error".center(16) + "\n" + "Retrying...".center(16)
+                system("systemctl --user restart spotifyd.service")
                 print("Spotify Error, retrying")
                 errorPrinted = True
             sleep(2)
@@ -83,9 +84,10 @@ def discoLights():
     timeElapsed = 0
     while flashPass < discoTime:
         if useLcd:
-            if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16):
-                lcd.clear()
-                lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16)
+            if not speakerDiscon:
+                if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16):
+                    lcd.clear()
+                    lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16)
         for light in discoLightList:
             discoLight = allLights[int(light)]
             if nextColour == "red":
@@ -181,8 +183,10 @@ if useThreading:
 
 
     def lookForFastForward():
+        global speakerDiscon
         print("Bluetooth thread started")
         if path.exists('/dev/input/event0'):
+            speakerDiscon = False
             print("Speaker found, listening for presses")
             speakerButtons = evdev.InputDevice('/dev/input/event0')
             try:
@@ -201,6 +205,7 @@ if useThreading:
                 if useLcd:
                     lcd.clear()
                     lcd.message = "Speaker discon.\nPush light swtch"
+                    speakerDiscon = True
         else:
             print("Speaker disconnected")
         print("Bluetooth thread is over")
@@ -221,6 +226,7 @@ if __name__ == "__main__":
         import board
         import digitalio
         import adafruit_character_lcd.character_lcd as characterlcd
+        speakerDiscon = False
 
         lcd_columns = 16
         lcd_rows = 2
