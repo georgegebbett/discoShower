@@ -23,8 +23,6 @@ if useLcd:
 discoTime = int(int(config['DEFAULT']['discoTime']) / 1.5)
 useThreading = config['DEFAULT'].getboolean('useThreading')
 
-
-
 spotifyClientId = config['spotify']['clientId']
 spotifyClientSecret = config['spotify']['clientSecret']
 spotifyRedirectUri = config['spotify']['redirectUri']
@@ -66,6 +64,7 @@ def discoMusic():
                 errorPrinted = True
             sleep(2)
 
+
 def discoLights():
     print("Lights started")
     discoLightGroupId = hueBridge.get_group_id_by_name(groupName)
@@ -85,9 +84,11 @@ def discoLights():
     while flashPass < discoTime:
         if useLcd:
             if not speakerDiscon:
-                if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16):
+                if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item'][
+                    'name'].center(16):
                     lcd.clear()
-                    lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item']['name'].center(16)
+                    lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item'][
+                        'name'].center(16)
         for light in discoLightList:
             discoLight = allLights[int(light)]
             if nextColour == "red":
@@ -147,6 +148,7 @@ def stopDisco():
     if useLcd:
         displayMainMenu()
 
+
 def checkForSpeaker():
     errorPrinted = False
     while True:
@@ -161,10 +163,11 @@ def checkForSpeaker():
                 errorPrinted = True
             sleep(2)
 
+
 def nextUser():
     global currentUser
     if useLcd:
-        if currentUser < len(users)-1:
+        if currentUser < len(users) - 1:
             currentUser += 1
         else:
             currentUser = 0
@@ -172,10 +175,10 @@ def nextUser():
         displayMainMenu()
 
 
-
 def displayMainMenu():
     lcd.clear()
     lcd.message = " Press to start\n" + ("User: " + list(users.keys())[currentUser]).center(16)
+
 
 if useThreading:
     import threading
@@ -203,13 +206,14 @@ if useThreading:
             except IOError:
                 print("Speaker disconnected")
                 if useLcd:
-                    lcd.clear()
-                    lcd.message = "Speaker discon.\nPush light swtch"
-                    speakerDiscon = True
+                    if not speakerDiscon:
+                        lcd.clear()
+                        lcd.message = "Speaker discon.\nPush light swtch"
+                        speakerDiscon = True
+
         else:
             print("Speaker disconnected")
         print("Bluetooth thread is over")
-
 
 if __name__ == "__main__":
 
@@ -226,6 +230,7 @@ if __name__ == "__main__":
         import board
         import digitalio
         import adafruit_character_lcd.character_lcd as characterlcd
+
         speakerDiscon = False
 
         lcd_columns = 16
@@ -245,6 +250,7 @@ if __name__ == "__main__":
     if useGpio:
         from gpiozero import Button, LED
         from signal import pause
+
         if useLcd:
             nextUserButton = Button(nextUserButtonPin)
             nextUserButton.when_pressed = nextUser
