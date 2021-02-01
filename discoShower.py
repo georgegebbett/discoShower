@@ -267,7 +267,7 @@ if __name__ == "__main__":
         led.on()
 
 
-        startButton.when_pressed = buTest()
+        startButton.when_pressed = buTest
         pause()
     else:
         startDisco()
