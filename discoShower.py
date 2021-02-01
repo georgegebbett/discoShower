@@ -251,14 +251,23 @@ if __name__ == "__main__":
         from gpiozero import Button, LED
         from signal import pause
 
+        def buTest():
+            sleep(0.5)  # adjust to your liking
+            act = startButton.is_active
+            if act:
+                nextUser()
+            else:
+                startDisco()
+
         if useLcd:
             nextUserButton = Button(nextUserButtonPin)
             nextUserButton.when_pressed = nextUser
         startButton = Button(startButtonPin)
         led = LED(ledPin)
         led.on()
-        startButton.when_pressed = startDisco
-        startButton.when_held = nextUser
+
+
+        startButton.when_pressed = buTest()
         pause()
     else:
         startDisco()
