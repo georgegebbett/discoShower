@@ -258,6 +258,7 @@ if __name__ == "__main__":
         led = LED(ledPin)
         led.on()
         startButton.when_pressed = startDisco
+        startButton.when_held = nextuser
         pause()
     else:
         startDisco()
