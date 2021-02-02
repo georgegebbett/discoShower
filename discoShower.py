@@ -125,6 +125,8 @@ def startDisco():
         discoMusic()
         print("Music started")
         discoLights()
+    else:
+        displayMainMenu()
 
 
 def stopDisco():
@@ -152,6 +154,9 @@ def stopDisco():
 def checkForSpeaker():
     errorPrinted = False
     while True:
+        if useGpio:
+            if startButton.is_active:
+                return False
         if path.exists('/dev/input/event0'):
             return True
         else:
