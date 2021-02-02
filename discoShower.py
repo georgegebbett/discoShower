@@ -85,10 +85,10 @@ def discoLights():
         if useLcd:
             if not speakerDiscon:
                 if lcd.message != "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item'][
-                    'name'].center(16):
+                    'name'][:15].center(16):
                     lcd.clear()
                     lcd.message = "Current song:".center(16) + "\n" + spotify.current_user_playing_track()['item'][
-                        'name'].center(16)
+                        'name'][:15].center(16)
         for light in discoLightList:
             discoLight = allLights[int(light)]
             if nextColour == "red":
